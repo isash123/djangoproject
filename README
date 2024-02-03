@@ -171,11 +171,10 @@ RUN_MIGRATIONS=True
 
 # `core`
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/EerMS_?referralCode=eZUXQs)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/rMEF2C?referralCode=eZUXQs)
 
 
-https://railway.app/template/HFZcHU?referralCode=eZUXQs
-https://railway.app/template/sMWjy0?referralCode=eZUXQs
+https://railway.app/template/rMEF2C?referralCode=eZUXQs
 
 Full Django/Postgres stack with Celery tasks and Redis as cache/queue.
 
