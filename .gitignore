@@ -123,6 +123,7 @@ celerybeat.pid
 
 # Environments
 # Ignore 'real' .env files, but ensure that .erb ending env files are committed as these are templates
+.gitignore
 .env
 .env.*
 !.env*.erb

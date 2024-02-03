@@ -1,0 +1,262 @@
+# Pip install one package at a time
+
+cat requirements.txt | xargs -n 1 pip install
+
+# Start Postgres Server
+
+sudo service postgresql restart
+brew services stop postgresql
+brew services start postgresql@14
+brew services restart postgresql@14
+initdb /usr/local/var/postgres -E utf8
+
+# Start Redis Server
+
+sudo service redis-server start
+sudo service redis-server restart (if issues run this)
+
+celery -A core worker -l info --concurrency=4
+celery -A core beat -l info
+redis-server
+
+stripe listen --forward-to localhost:8000/webhooks/stripe/
+stripe listen --forward-to https://dilanu.herokuapp.com/webhooks/stripe/
+
+# Install stripe-cli
+
+$ sudo apt-key adv --keyserver hkp://pool.sks-keyservers.net:80 --recv-keys 379CE192D401AB61
+$ echo "deb https://dl.bintray.com/stripe/stripe-cli-deb stable main" | sudo tee -a /etc/apt/sources.list
+$ sudo apt-get update
+$ sudo apt-get install stripe
+
+# Git hub setup
+
+git config --global user.name "Shashank Kapoor"
+git config --global user.email "shashank.kapoor123@gmail.com"
+git config --global push.default matching
+git config --global alias.co checkout
+git init
+
+# See all Git and Heroku connections
+
+git remote -v
+
+# Remove Git from Project
+
+rm -rf .git
+
+# Copy paste a folder
+
+cp -a dilanu dilanu-copy
+
+# Error: That port is already in use.
+
+sudo fuser -k 8000/tcp
+
+# Git revert
+
+git log
+git reset --hard 0d1d7fc32
+
+# Alternatively, if there's work to keep:
+
+git stash
+git reset --hard 0d1d7fc32
+git stash pop
+
+# Download Database from Heroku
+
+heroku pg:pull DATABASE_URL dilanu --app dilanu
+heroku pg:pull DATABASE_URL dilanu-live --app dilanu
+
+# Restore Database to Heroku
+
+heroku pg:reset --confirm dilanu
+heroku pg:push dilanu DATABASE_URL --app dilanu
+
+# Heroku logs
+
+heroku logs --tail
+
+# Django settings.configure error
+
+export DJANGO_SETTINGS_MODULE=core.settings
+heroku config:set DJANGO_SETTINGS_MODULE=core.settings
+
+# Managing PSQL
+
+heroku pg:psql
+psql dilanu
+\dt to list all tables
+ALTER TABLE auth_user DROP CONSTRAINT IF EXISTS auth_user_email_1c89df09_uniq;
+DROP INDEX auth_user_email_1c89df09_like;
+https://stackoverflow.com/questions/50029550/django-programmingerror-relation-already-exists-after-a-migration-created-in-th
+
+# Deleted from ProcFile
+
+worker: celery --app=core worker -l INFO --concurrency 1
+schedule: celery --app=core beat -l info
+
+# Hopefully won't need ever (might require reinstalling Django)
+
+find . -path "_/migrations/_.py" -not -name "**init**.py" -delete
+find . -path "_/migrations/_.pyc" -delete
+
+# AWS upload error
+
+Delete credentials file from ~/.aws
+Bash - aws configure
+Enter new credentials
+
+
+
+# Postgres
+DATABASE_PRIVATE_URL=postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}
+DATABASE_URL=postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}/${{PGDATABASE}}
+PGDATA=/var/lib/postgresql/data/pgdata
+PGDATABASE=${{POSTGRES_DB}}
+PGHOST=${{RAILWAY_TCP_PROXY_DOMAIN}}
+PGPASSWORD=${{POSTGRES_PASSWORD}}
+PGPORT=${{RAILWAY_TCP_PROXY_PORT}}
+PGUSER=${{POSTGRES_USER}}
+POSTGRES_DB=railway
+POSTGRES_PASSWORD=################
+POSTGRES_USER=postgres
+SSL_CERT_DAYS=820
+
+# Redis
+RAILWAY_RUN_AS_ROOT=true
+RAILWAY_RUN_UID=0
+REDISHOST=${{RAILWAY_TCP_PROXY_DOMAIN}}
+REDISPASSWORD=${{REDIS_PASSWORD}}
+REDISPORT=${{RAILWAY_TCP_PROXY_PORT}}
+REDISUSER=default
+REDIS_PASSWORD=##########################
+REDIS_PRIVATE_URL=redis://default:${{REDIS_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:6379
+REDIS_URL=redis://default:${{REDIS_PASSWORD}}@${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}
+
+# celery-worker
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+DJANGO_SECRET_KEY=########################
+PGDATABASE=${{Postgres.PGDATABASE}}
+PGHOST=postgres.railway.internal
+PGPASSWORD=${{Postgres.PGPASSWORD}}
+PGPORT=5432
+PGUSER=${{Postgres.PGUSER}}
+REDISHOST=redis.railway.internal
+REDISPASSWORD=${{Redis.REDISPASSWORD}}
+REDISPORT=6379
+REDISUSER=${{Redis.REDISUSER}}
+REDIS_URL=${{Redis.REDIS_URL}}
+
+# django
+DATABASE_URL=${{Postgres.DATABASE_URL}}
+DEBUG=True
+DJANGO_SECRET_KEY=##################
+PGDATABASE=${{Postgres.PGDATABASE}}
+PGHOST=postgres.railway.internal
+PGPASSWORD=${{Postgres.PGPASSWORD}}
+PGPORT=5432
+PGUSER=${{Postgres.PGUSER}}
+PORT=8000
+REDISHOST=redis.railway.internal
+REDISPASSWORD=${{Redis.REDISPASSWORD}}
+REDISPORT=6379
+REDISUSER=${{Redis.REDISUSER}}
+REDIS_URL=${{Redis.REDIS_URL}}
+RUN_MIGRATIONS=True
+
+
+
+
+# `core`
+
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/EerMS_?referralCode=eZUXQs)
+
+
+https://railway.app/template/HFZcHU?referralCode=eZUXQs
+https://railway.app/template/sMWjy0?referralCode=eZUXQs
+
+Full Django/Postgres stack with Celery tasks and Redis as cache/queue.
+
+## Overview
+
+Deploy a "complete" Django setup - DB, caching and background tasks with Celery are all set up and ready to go.
+
+Check out the full readme and brief on GitHub: https://github.com/Antvirf/core
+
+## Deploying the template
+
+1. In the deployment screen, you will need to configure a `DJANGO_SECRET_KEY`. You can use the below snippet to do that or otherwise generate your own.
+    <details>
+    <summary>Snippet to create secret</summary>
+
+    **This assumes your default python installation has Django installed.**
+
+    ```bash
+    python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+    ```
+
+    </details>
+1. Once the containers have been deployed, please take the following steps to delete public proxy addresses, as you will not need to access the private services directly:
+    - Go to the **Postgres** service > Settings > Networking, delete the proxy
+    - Go to the **Redis** service > Settings > Networking, delete the proxy
+
+## Resources
+
+This template deploys:
+
+- 1 service running Django
+- 1 service running Celery (same as container #1 but with different startup command)
+- 1 service running Redis
+- 1 service running Postgres
+
+You can test the setup locally with docker compose:
+
+```bash
+git clone https://github.com/Antvirf/core
+cd core
+docker-compose up
+```
+
+## Service diagram
+
+> **Warning**
+> Please check the instructions above on deploying the template. By default, Railway creates publicly available proxies for your Postgres and Redis services - make sure to delete them. Should you ever need direct access, creating the proxies is just a few clicks.
+
+```mermaid
+flowchart LR
+
+subgraph rwp["Your Railway Project"]
+    subgraph public["Publicly exposed services"]
+        django["App container\n(Django server)"]
+    end
+    subgraph private["Private services"]
+        celery["App container\n(Celery worker)"]
+        psql["PostgreSQL"]
+        redis["Redis"]
+    end
+end
+
+users["Users"] --> django
+django --> celery
+django --> psql
+
+celery --> psql
+celery --> redis
+django --> redis
+
+```
+
+## Django project setup
+
+This is a barebones Django-project with the following additions/updates:
+
+- Configures a PostgreSQL database
+- Configures a Redis cache
+- Configures Celery, and installs the following add-on apps:
+  - [`django-celery-beat`](https://github.com/celery/django-celery-beat) for periodic task management
+  - [`django-celery-results`](https://github.com/celery/django-celery-results) for viewing results of Celery tasks in Django Admin
+- Uses [`python-decouple`](https://github.com/HBNetwork/python-decouple) to manage settings via environment varialbes
+- Uses [`whitenoise`](https://github.com/evansd/whitenoise) to make serving static assets easy
+- Installs and runs with [`gunicorn`](https://github.com/benoitc/gunicorn)
