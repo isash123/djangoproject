@@ -8,13 +8,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("DJANGO_SECRET_KEY", default="insecure-key-fill-with-your-own")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", default="insecure-key-fill-with-your-own")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=False, cast=bool)
-# CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", "*").split(" ")
-ALLOWED_HOSTS = ["*"]
-# CORS_ORIGIN_WHITELIST = config("CORS_ORIGIN_WHITELIST", "*").split(" ")
+DEBUG = os.environ.get("DEBUG", default=False, cast=bool)
+# CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "*").split(" ")
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(" ")
+# CORS_ORIGIN_WHITELIST = os.environ.get("CORS_ORIGIN_WHITELIST", "*").split(" ")
 
 # Application definition
 INSTALLED_APPS = [
@@ -71,21 +71,21 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": config("PGHOST", default="db"),
-        "USER": config("PGUSER", default="postgres"),
-        "NAME": config("PGDATABASE", default="postgres"),
-        "PASSWORD": config("PGPASSWORD", default="postgres"),
-        "PORT": config("PGPORT", default=5432),
+        "HOST": os.environ.get("PGHOST", default="db"),
+        "USER": os.environ.get("PGUSER", default="postgres"),
+        "NAME": os.environ.get("PGDATABASE", default="postgres"),
+        "PASSWORD": os.environ.get("PGPASSWORD", default="postgres"),
+        "PORT": os.environ.get("PGPORT", default=5432),
         "CONN_MAX_AGE": 60,
     }
 }
 
-REDIS_URL = f"redis://{config('REDISUSER', default='default')}:{config('REDISPASSWORD', default='')}@{config('REDISHOST', default='redis')}:{config('REDISPORT', default=6379)}"
+REDIS_URL = f"redis://{os.environ.get('REDISUSER', default='default')}:{os.environ.get('REDISPASSWORD', default='')}@{os.environ.get('REDISHOST', default='redis')}:{os.environ.get('REDISPORT', default=6379)}"
 
 # CELERY CONFIG
 CELERY_BROKER_URL = REDIS_URL
-CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="django-db")
-CELERY_BEAT_SCHEDULER = config(
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", default="django-db")
+CELERY_BEAT_SCHEDULER = os.environ.get(
     "CELERY_BEAT_SCHEDULER", default="django_celery_beat.schedulers.DatabaseScheduler"
 )
 
@@ -129,8 +129,8 @@ STATICFILES_DIRS = (os.path.join(CORE_DIR, 'core/static'),)
 # EMAIL CLIENT
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
